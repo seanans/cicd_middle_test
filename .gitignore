@@ -1,0 +1,16 @@
+# Django
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+staticfiles/
+
+# Віртуальне середовище
+venv/
+
+# Файли IDE
+.idea/
+*.swp
+
+# Змінні середовища
+.env
