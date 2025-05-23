@@ -2,13 +2,15 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from .models import Image
 from datetime import datetime, timedelta
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 class GalleryViewTests(TestCase):
     def setUp(self):
         self.client = Client()
+        # Create a temporary image file for testing
         self.image = Image.objects.create(
             title="Test Image",
-            image="test.jpg",
+            image=SimpleUploadedFile("test.jpg", b"file_content", content_type="image/jpeg"),
             created_date=datetime.now().date(),
             age_limit=18
         )
@@ -21,11 +23,12 @@ class GalleryViewTests(TestCase):
     def test_gallery_view_excludes_old_images(self):
         old_image = Image.objects.create(
             title="Old Image",
-            image="old.jpg",
+            image=SimpleUploadedFile("old.jpg", b"file_content", content_type="image/jpeg"),
             created_date=(datetime.now() - timedelta(days=31)).date(),
             age_limit=18
         )
         response = self.client.get(reverse('main'))
+        self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Old Image")
 
 class ImageDetailViewTests(TestCase):
@@ -33,7 +36,7 @@ class ImageDetailViewTests(TestCase):
         self.client = Client()
         self.image = Image.objects.create(
             title="Detail Image",
-            image="detail.jpg",
+            image=SimpleUploadedFile("detail.jpg", b"file_content", content_type="image/jpeg"),
             created_date=datetime.now().date(),
             age_limit=18
         )
